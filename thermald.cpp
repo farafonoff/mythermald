@@ -51,6 +51,16 @@ int read_config(void* cfg, const char *section, const char *name, const char *va
 	}
 }
 
+#define BUFSIZE 100
+char buffer[BUFSIZE];
+int readfvalue_c(std::string fname) {
+	FILE *fs = fopen(fname.c_str(), "r");
+	fgets(buffer, BUFSIZE, fs);
+	int result = atoi(buffer);
+	fclose(fs);
+	return result;
+}
+
 int readfvalue(std::string fname) {
 	std::ifstream ifile;
 	ifile.open(fname);
@@ -82,9 +92,9 @@ int main() {
 	}
 	std::cout << "starting loop\n";
 	while(1) {
-		usleep(100000);
+		usleep(200000);
 		for(auto &ent: cf.zones) {
-			int cvalue = readfvalue(ent.second.path);
+			int cvalue = readfvalue_c(ent.second.path);
 			int lvalue = ent.second.lastvalue;
 			ent.second.lastvalue = cvalue;
 			if (cvalue==lvalue) {
