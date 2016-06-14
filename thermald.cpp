@@ -9,6 +9,12 @@
 #include <fstream>
 #include <sstream>
 
+std::ofstream log;
+
+void initlog() {
+	log.open("thermald.log", std::ofstream::out | std::ofstream::app);
+}
+
 class thermaction {
 	public:
 		int limit;
@@ -77,20 +83,22 @@ void writefvalue(std::string fname, std::string value) {
 
 
 int main() {
+	daemon(1,0);
+	initlog();
 	configholder cf;
 	ini_parse("thermald.conf", read_config, &cf); 	
 	for(auto const &ent: cf.zones) {
-		std::cout << ent.first << "\n";
-		std::cout << ent.second.path << "\n";
+		log << ent.first << std::endl;
+		log << ent.second.path << std::endl;
 		for(auto const &ente: ent.second.events) {
-			std::cout << ente.first << "\n";
-			std::cout << ente.second.limit << "\n";
-			std::cout << ente.second.type << "\n";
-			std::cout << ente.second.path << "\n";
-			std::cout << ente.second.value << "\n";	
+			log << ente.first << std::endl;
+			log << ente.second.limit << std::endl;
+			log << ente.second.type << std::endl;
+			log << ente.second.path << std::endl;
+			log << ente.second.value << std::endl;	
 		}
 	}
-	std::cout << "starting loop\n";
+	log << "starting loop\n";
 	while(1) {
 		usleep(200000);
 		for(auto &ent: cf.zones) {
@@ -100,7 +108,7 @@ int main() {
 			if (cvalue==lvalue) {
 				continue;
 			}
-			std::cout << ent.first << " " << cvalue << "\n";
+			log << ent.first << " " << cvalue << std::endl;
 			for(auto &ente: ent.second.events) {
 				thermaction& act = ente.second;
 				int direction=0;
@@ -120,10 +128,10 @@ int main() {
 					}
 				}
 				if (direction!=0) {
-					std::cout << ente.first << " passed dir. " << direction << "\n";
+					log << ente.first << " passed dir. " << direction << std::endl;
 					if (direction == ente.second.type) {
 						writefvalue(ente.second.path, ente.second.value);
-						std::cout << ente.second.value << " >> " << ente.second.path << "\n";
+						log << ente.second.value << " >> " << ente.second.path << std::endl;
 						if (ente.second.wall_enabled) {
 							std::ostringstream wallcmd;
 							wallcmd << "wall \"" << "point " << ente.first << 

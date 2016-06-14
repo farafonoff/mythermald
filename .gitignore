@@ -1,5 +1,4 @@
 # Compiled Object files
-thermald
 *.slo
 *.lo
 *.o
@@ -28,3 +27,8 @@ thermald
 *.exe
 *.out
 *.app
+thermald
+
+#output
+*.log
+
