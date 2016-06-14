@@ -4,4 +4,6 @@ thermald: thermald.cpp
 release: thermald.cpp
 	g++ -O2 -std=c++11 thermald.cpp ini.c -I. -o thermald
 
-
+install:
+	cp thermald.conf /etc/thermald.conf
+	cp thermald /usr/bin/thermald

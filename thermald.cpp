@@ -12,7 +12,7 @@
 std::ofstream log;
 
 void initlog() {
-	log.open("thermald.log", std::ofstream::out | std::ofstream::app);
+	log.open("/var/log/thermald.log", std::ofstream::out | std::ofstream::app);
 }
 
 class thermaction {
@@ -83,10 +83,10 @@ void writefvalue(std::string fname, std::string value) {
 
 
 int main() {
-	daemon(1,0);
+	daemon(0,0);
 	initlog();
 	configholder cf;
-	ini_parse("thermald.conf", read_config, &cf); 	
+	ini_parse("/etc/thermald.conf", read_config, &cf); 	
 	for(auto const &ent: cf.zones) {
 		log << ent.first << std::endl;
 		log << ent.second.path << std::endl;
